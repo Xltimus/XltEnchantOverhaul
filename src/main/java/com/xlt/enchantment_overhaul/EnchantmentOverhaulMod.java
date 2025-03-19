@@ -1,8 +1,12 @@
-package com.example.examplemod;
+package com.xlt.enchantment_overhaul;
 
 import com.mojang.logging.LogUtils;
+import com.xlt.enchantment_overhaul.menu.OverhaulEnchantingScreen;
+import com.xlt.enchantment_overhaul.network.EnchantmentOverhaulNetwork;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -30,11 +34,11 @@ import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(ExampleMod.MODID)
-public class ExampleMod
+@Mod(EnchantmentOverhaulMod.MODID)
+public class EnchantmentOverhaulMod
 {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "examplemod";
+    public static final String MODID = "enchantment_overhaul";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace
@@ -61,7 +65,7 @@ public class ExampleMod
                 output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
             }).build());
 
-    public ExampleMod()
+    public EnchantmentOverhaulMod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -80,6 +84,18 @@ public class ExampleMod
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
+
+        //Anvil Event Handler
+        MinecraftForge.EVENT_BUS.register(AnvilEventHandler.class);
+
+        ModMenuTypes.MENUS.register(modEventBus);
+
+        //Register Packet Handler
+        modEventBus.register(EnchantmentOverhaulNetwork.class);
+
+        //ModEventHandler.register(modEventBus);
+        //modEventBus.register(ModEventHandler.class);
+        MinecraftForge.EVENT_BUS.register(ModEventHandler.class);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -123,6 +139,10 @@ public class ExampleMod
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+
+            //Links the Overhaul Enchanting Menu to the Overhaul Enchanting Screen
+
+            MenuScreens.register(ModMenuTypes.OVERHAUL_ENCHANTING_MENU.get(), OverhaulEnchantingScreen::new);
         }
     }
 }

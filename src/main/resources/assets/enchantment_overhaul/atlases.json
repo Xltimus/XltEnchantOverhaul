@@ -1,0 +1,6 @@
+[
+  {
+    "type": "minecraft:sprite",
+    "resource": "enchantment_overhaul:textures/gui/container/enchantment_buttons"
+  }
+]
